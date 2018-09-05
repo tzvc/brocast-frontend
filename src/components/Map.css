@@ -29,6 +29,14 @@
   animation: pulsate 2400ms ease-out infinite;
 }
 
+.picker-pin {
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 21, 72, 0.877);
+  border-radius: 50%;
+  z-index: 1000;
+}
+
 @keyframes pulsate {
   0% {
     transform: scale(0.1);
