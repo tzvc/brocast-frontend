@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import Map from "./components/Map";
-import "./App.css";
+// containers
+import MapContainer from "./containers/MapContainer";
 
 class App extends Component {
   render() {
-    return <Map />;
+    return <MapContainer />;
   }
 }
 
