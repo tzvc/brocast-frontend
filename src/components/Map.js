@@ -128,9 +128,7 @@ export default class Map extends Component {
 
   render() {
     const style = {
-      position: "absolute",
-      top: 0,
-      bottom: 0,
+      height: "100%",
       width: "100%"
     };
 
