@@ -1,14 +1,7 @@
 import React, { Component } from "react";
-import {
-  Image,
-  Grid,
-  Input,
-  Form,
-  TextArea,
-  Divider,
-  List,
-  Button
-} from "semantic-ui-react";
+import { Image, Divider, List } from "semantic-ui-react";
+//components
+import CastCreationForm from "./CastCreationForm";
 
 export default class CastsExplorer extends Component {
   constructor(props) {
@@ -36,21 +29,7 @@ export default class CastsExplorer extends Component {
           ))}
         </List>
         <Divider />
-        <Grid style={{ height: "20vh" }} verticalAlign="middle">
-          <Grid.Column mobile={13} tablet={13} computer={13}>
-            <Form>
-              <Input fluid placeholder="Title" />
-              <TextArea
-                autoHeight
-                placeholder="Enter message..."
-                style={{ minHeight: 70 }}
-              />
-            </Form>
-          </Grid.Column>
-          <Grid.Column mobile={3} tablet={3} computer={3}>
-            <Button circular icon="paper plane" size="large" color="red" />
-          </Grid.Column>
-        </Grid>
+        <CastCreationForm onCastSubmit={this.props.onCastSubmit} />
       </React.Fragment>
     );
   }
