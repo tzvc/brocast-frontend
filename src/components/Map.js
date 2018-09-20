@@ -5,7 +5,7 @@ import concaveman from "concaveman";
 // utils
 import { computeNewPosWithOffset } from "../utils/Geo";
 // constants
-import { BASE_GEOJSON } from "../constants/Geo";
+import { BASE_GJ_POLY } from "../constants/Geo";
 // styles
 import "./Map.css";
 
@@ -16,7 +16,53 @@ export default class Map extends Component {
   constructor(props) {
     super(props);
     this.pickers = [];
+    this.casts = [];
   }
+
+  componentDidUpdate(prevProps) {
+    console.log(this.props, prevProps);
+    // Typical usage (don't forget to compare props):
+    if (this.props.userPos !== prevProps.userPos) {
+      this._initViewPort(this.props.userPos);
+    }
+
+    if (this.props.lastCast !== prevProps.lastCast) {
+      console.log("New last cast ", this.props.lastCast);
+      if (!this.props.lastCast) {
+        // a new polygon has been chosen, remove all old markers
+        this.casts.forEach(cast => {
+          cast.remove();
+        });
+        this.casts = [];
+      } else {
+        // Add new cast to map
+        console.log("Adding new cast ", this.props.lastCast);
+        const newCastMarker = this._createCastMarker(
+          this.props.lastCast.geometry.coordinates
+        );
+        newCastMarker.addTo(this.map);
+        this.casts.push(newCastMarker);
+      }
+    }
+  }
+
+  _createCastMarker = pos => {
+    // create a DOM element for the marker
+    const marker = document.createElement("div");
+
+    marker.className = "cast-pin";
+
+    // add marker to map
+    const castMarker = new mapboxgl.Marker(marker).setLngLat(pos);
+    marker.addEventListener("click", () => {
+      this.map.flyTo({
+        speed: 3,
+        zoom: 16,
+        center: pos
+      });
+    });
+    return castMarker;
+  };
 
   _createUserPositionMarker = userPos => {
     // create a DOM element for the marker
@@ -49,8 +95,7 @@ export default class Map extends Component {
     picker.on("dragend", () => {
       this.props.onSelectionChange(this._generateConvexGeoJson());
     });
-
-    this.pickers.push(picker);
+    return picker;
   };
 
   _generateConvexGeoJson = () => {
@@ -58,7 +103,7 @@ export default class Map extends Component {
       const pos = picker.getLngLat();
       return [pos.lng, pos.lat];
     });
-    let convexGJ = BASE_GEOJSON;
+    let convexGJ = BASE_GJ_POLY;
 
     convexGJ.geometry.coordinates = [concaveman(pickersPos)];
     return convexGJ;
@@ -70,8 +115,7 @@ export default class Map extends Component {
       .setData(this._generateConvexGeoJson());
   };
 
-  _initViewPort = posObj => {
-    const userPos = [posObj.coords.longitude, posObj.coords.latitude];
+  _initViewPort = userPos => {
     console.log("Initing viewport at pos ", userPos);
     this._createUserPositionMarker(userPos);
 
@@ -79,7 +123,9 @@ export default class Map extends Component {
 
     boundingBox.forEach(y => {
       boundingBox.forEach(x => {
-        this._createPickerMarker(computeNewPosWithOffset(y, x, userPos));
+        this.pickers.push(
+          this._createPickerMarker(computeNewPosWithOffset(y, x, userPos))
+        );
       });
     });
 
@@ -102,12 +148,10 @@ export default class Map extends Component {
       style: "mapbox://styles/mapbox/light-v9"
     });
 
-    navigator.geolocation.getCurrentPosition(this._initViewPort);
-
     this.map.on("load", () => {
       this.map.addSource("selection-source", {
         type: "geojson",
-        data: BASE_GEOJSON
+        data: BASE_GJ_POLY
       });
 
       this.map.addLayer({

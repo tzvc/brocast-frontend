@@ -1,7 +1,21 @@
-export const BASE_GEOJSON = {
+export const BASE_GJ_POLY = {
   type: "Feature",
   geometry: {
     type: "Polygon",
     coordinates: [[]]
   }
+};
+
+export const BASE_GJ_POINT = {
+  type: "Feature",
+  geometry: {
+    type: "Point",
+    coordinates: []
+  },
+  properties: {}
+};
+
+export const BASE_FC = {
+  type: "FeatureCollection",
+  features: []
 };
