@@ -3,7 +3,8 @@ export const BASE_GJ_POLY = {
   geometry: {
     type: "Polygon",
     coordinates: [[]]
-  }
+  },
+  properties: {}
 };
 
 export const BASE_GJ_POINT = {
