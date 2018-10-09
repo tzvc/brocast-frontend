@@ -7,6 +7,7 @@ import { API_ROOT } from "../constants/api";
 import { BASE_FC, BASE_GJ_POINT } from "../constants/Geo";
 import CastsExplorer from "../components/CastsExplorer";
 import { Grid } from "semantic-ui-react";
+import CastViewer from "../components/CastViewer";
 //constants
 
 export default class MapContainer extends Component {
@@ -14,13 +15,15 @@ export default class MapContainer extends Component {
     super(props);
     this.state = {
       userPos: null,
-      casts: BASE_FC
+      casts: [],
+      selectedCast: null
     };
 
     this.socket = null;
   }
 
   componentDidMount() {
+    console.log("Getting user pos...");
     navigator.geolocation.getCurrentPosition(posObj =>
       this.setState({
         userPos: [posObj.coords.longitude, posObj.coords.latitude]
@@ -30,14 +33,18 @@ export default class MapContainer extends Component {
     this.socket = io(API_ROOT);
     this.socket.on("brocastChangeFeed", cast => {
       console.log("New cast recceived from feed", cast);
-      this.setState({ lastCast: cast });
+      this.setState({ casts: [...this.state.casts, cast] });
     });
   }
 
   _handleSelectionChange = newSelection => {
     console.log("Subscribing to new poly", newSelection);
-    this.setState({ lastCast: null }); // clear old markers
+    this.setState({ casts: [] }); // clear old markers
     this.socket.emit("subscribe", newSelection); // subscribe to new polygon
+  };
+
+  _handleCastMarkerClick = cast => {
+    this.setState({ selectedCast: cast });
   };
 
   _handleNewCastSubmit = newCastInfos => {
@@ -52,7 +59,7 @@ export default class MapContainer extends Component {
   };
 
   render() {
-    console.log(this.state);
+    console.log("running in ", process.env.NODE_ENV);
     return (
       <Grid padded style={{ height: "100vh" }}>
         <Grid.Column
@@ -64,10 +71,17 @@ export default class MapContainer extends Component {
           tablet={6}
           computer={6}
         >
-          <CastsExplorer
-            casts={this.state.casts}
-            onCastSubmit={this._handleNewCastSubmit}
-          />
+          {this.state.selectedCast ? (
+            <CastViewer
+              cast={this.state.selectedCast}
+              onReturn={() => this.setState({ selectedCast: null })}
+            />
+          ) : (
+            <CastsExplorer
+              casts={this.state.casts}
+              onCastSubmit={this._handleNewCastSubmit}
+            />
+          )}
         </Grid.Column>
         <Grid.Column
           style={{ padding: 0 }}
@@ -77,8 +91,9 @@ export default class MapContainer extends Component {
         >
           <Map
             userPos={this.state.userPos}
-            lastCast={this.state.lastCast}
+            casts={this.state.casts}
             onSelectionChange={this._handleSelectionChange}
+            onCastMarkerClick={this._handleCastMarkerClick}
           />
         </Grid.Column>
       </Grid>

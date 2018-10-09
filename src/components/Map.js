@@ -17,6 +17,12 @@ export default class Map extends Component {
     super(props);
     this.pickers = [];
     this.casts = [];
+
+    this.setMapLoadedResolve = null;
+
+    this.mapLoaded = new Promise((resolve, reject) => {
+      this.setMapLoadedResolve = resolve;
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -26,9 +32,8 @@ export default class Map extends Component {
       this._initViewPort(this.props.userPos);
     }
 
-    if (this.props.lastCast !== prevProps.lastCast) {
-      console.log("New last cast ", this.props.lastCast);
-      if (!this.props.lastCast) {
+    if (this.props.casts.length !== prevProps.casts.length) {
+      if (this.props.casts.length == 0) {
         // a new polygon has been chosen, remove all old markers
         this.casts.forEach(cast => {
           cast.remove();
@@ -36,9 +41,12 @@ export default class Map extends Component {
         this.casts = [];
       } else {
         // Add new cast to map
-        console.log("Adding new cast ", this.props.lastCast);
+        console.log(
+          "Adding new cast ",
+          this.props.casts[this.props.casts.length - 1]
+        );
         const newCastMarker = this._createCastMarker(
-          this.props.lastCast.geometry.coordinates
+          this.props.casts[this.props.casts.length - 1]
         );
         newCastMarker.addTo(this.map);
         this.casts.push(newCastMarker);
@@ -46,20 +54,24 @@ export default class Map extends Component {
     }
   }
 
-  _createCastMarker = pos => {
+  _createCastMarker = cast => {
+    console.log(cast);
     // create a DOM element for the marker
     const marker = document.createElement("div");
 
     marker.className = "cast-pin";
 
     // add marker to map
-    const castMarker = new mapboxgl.Marker(marker).setLngLat(pos);
+    const castMarker = new mapboxgl.Marker(marker).setLngLat(
+      cast.geometry.coordinates
+    );
     marker.addEventListener("click", () => {
       this.map.flyTo({
         speed: 3,
         zoom: 16,
-        center: pos
+        center: cast.geometry.coordinates
       });
+      this.props.onCastMarkerClick(cast);
     });
     return castMarker;
   };
@@ -115,7 +127,7 @@ export default class Map extends Component {
       .setData(this._generateConvexGeoJson());
   };
 
-  _initViewPort = userPos => {
+  _initViewPort = async userPos => {
     console.log("Initing viewport at pos ", userPos);
     this._createUserPositionMarker(userPos);
 
@@ -132,9 +144,12 @@ export default class Map extends Component {
     //add pickers to the map
     this.pickers.forEach(picker => picker.addTo(this.map));
 
-    this._updateSelection();
     this.props.onSelectionChange(this._generateConvexGeoJson());
 
+    // wait until map style is loaded
+    await this.mapLoaded;
+
+    this._updateSelection();
     this.map.flyTo({
       speed: 3,
       zoom: 14,
@@ -153,7 +168,8 @@ export default class Map extends Component {
         type: "geojson",
         data: BASE_GJ_POLY
       });
-
+      this.setMapLoadedResolve();
+      console.log(this.mapLoaded);
       this.map.addLayer({
         id: "selection",
         type: "fill",
