@@ -10,7 +10,10 @@ export default class CastViewer extends Component {
   render() {
     return (
       <React.Fragment>
-        <Image src="https://i.imgur.com/A6lpktG.png" size="small" />
+        <Image
+          src="https://storage.googleapis.com/picture-delivery-pipeline.appspot.com/A6lpktG.png"
+          size="small"
+        />
         <Divider />
 
         <Header
