@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Input, Form, TextArea, Button } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 export default class CastsExplorer extends Component {
   state = { title: "", message: "" };

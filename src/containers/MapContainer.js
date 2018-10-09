@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import Map from "../components/Map";
 
 import { API_ROOT } from "../constants/api";
-import { BASE_FC, BASE_GJ_POINT } from "../constants/Geo";
+import { BASE_GJ_POINT } from "../constants/Geo";
 import CastsExplorer from "../components/CastsExplorer";
 import { Grid } from "semantic-ui-react";
 import CastViewer from "../components/CastViewer";
@@ -40,7 +40,7 @@ export default class MapContainer extends Component {
   _handleSelectionChange = newSelection => {
     console.log("Subscribing to new poly", newSelection);
     this.setState({ casts: [] }); // clear old markers
-    this.socket.emit("Brocast_area_create", newSelection); // subscribe to new polygon
+    this.socket.emit("Brocast_area_subscribe", newSelection); // subscribe to new polygon
   };
 
   _handleCastMarkerClick = cast => {
@@ -80,6 +80,7 @@ export default class MapContainer extends Component {
             <CastsExplorer
               casts={this.state.casts}
               onCastSubmit={this._handleNewCastSubmit}
+              onNewCastSelection={this._handleCastMarkerClick}
             />
           )}
         </Grid.Column>
@@ -94,6 +95,7 @@ export default class MapContainer extends Component {
             casts={this.state.casts}
             onSelectionChange={this._handleSelectionChange}
             onCastMarkerClick={this._handleCastMarkerClick}
+            cast={this.state.selectedCast}
           />
         </Grid.Column>
       </Grid>

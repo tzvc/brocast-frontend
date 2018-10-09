@@ -3,10 +3,6 @@ import { Image, Divider, Header, Button } from "semantic-ui-react";
 //components
 
 export default class CastViewer extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <React.Fragment>

@@ -31,9 +31,24 @@ export default class Map extends Component {
     if (this.props.userPos !== prevProps.userPos) {
       this._initViewPort(this.props.userPos);
     }
+    if (this.props.cast !== prevProps.cast) {
+      console.log(this.props.cast, prevProps.cast);
+      if (this.props.cast)
+        this.map.flyTo({
+          speed: 3,
+          zoom: 16,
+          center: this.props.cast.geometry.coordinates
+        });
+      else
+        this.map.flyTo({
+          speed: 3,
+          zoom: 14,
+          center: this.map.getCenter()
+        });
+    }
 
     if (this.props.casts.length !== prevProps.casts.length) {
-      if (this.props.casts.length == 0) {
+      if (this.props.casts.length === 0) {
         // a new polygon has been chosen, remove all old markers
         this.casts.forEach(cast => {
           cast.remove();
@@ -66,11 +81,6 @@ export default class Map extends Component {
       cast.geometry.coordinates
     );
     marker.addEventListener("click", () => {
-      this.map.flyTo({
-        speed: 3,
-        zoom: 16,
-        center: cast.geometry.coordinates
-      });
       this.props.onCastMarkerClick(cast);
     });
     return castMarker;

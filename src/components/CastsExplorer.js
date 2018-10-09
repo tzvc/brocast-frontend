@@ -4,10 +4,6 @@ import { Image, Divider, List } from "semantic-ui-react";
 import CastCreationForm from "./CastCreationForm";
 
 export default class CastsExplorer extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <React.Fragment>
@@ -23,7 +19,7 @@ export default class CastsExplorer extends Component {
           verticalAlign="middle"
         >
           {this.props.casts.map(cast => (
-            <List.Item>
+            <List.Item onClick={() => this.props.onNewCastSelection(cast)}>
               <List.Content
                 header={cast.properties.title}
                 description={cast.properties.message}
