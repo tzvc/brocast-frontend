@@ -67,9 +67,9 @@ export default class MapContainer extends Component {
             boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
             zIndex: 1
           }}
-          mobile={6}
-          tablet={6}
-          computer={6}
+          mobile={4}
+          tablet={4}
+          computer={4}
         >
           {this.state.selectedCast ? (
             <CastViewer
@@ -86,9 +86,9 @@ export default class MapContainer extends Component {
         </Grid.Column>
         <Grid.Column
           style={{ padding: 0 }}
-          mobile={10}
-          tablet={10}
-          computer={10}
+          mobile={12}
+          tablet={12}
+          computer={12}
         >
           <Map
             userPos={this.state.userPos}
