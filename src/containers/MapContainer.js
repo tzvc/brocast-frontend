@@ -31,7 +31,7 @@ export default class MapContainer extends Component {
     );
 
     this.socket = io(API_ROOT);
-    this.socket.on("brocastChangeFeed", cast => {
+    this.socket.on("Brocast_area_feed", cast => {
       console.log("New cast recceived from feed", cast);
       this.setState({ casts: [...this.state.casts, cast] });
     });
@@ -40,7 +40,7 @@ export default class MapContainer extends Component {
   _handleSelectionChange = newSelection => {
     console.log("Subscribing to new poly", newSelection);
     this.setState({ casts: [] }); // clear old markers
-    this.socket.emit("subscribe", newSelection); // subscribe to new polygon
+    this.socket.emit("Brocast_area_create", newSelection); // subscribe to new polygon
   };
 
   _handleCastMarkerClick = cast => {
@@ -55,7 +55,7 @@ export default class MapContainer extends Component {
 
     console.log("Submitting new brocast ", newCastGJ);
 
-    this.socket.emit("newBrocast", newCastGJ);
+    this.socket.emit("Brocast_create", newCastGJ);
   };
 
   render() {
