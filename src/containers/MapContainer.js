@@ -30,7 +30,11 @@ export default class MapContainer extends Component {
       })
     );
 
-    this.socket = io(API_ROOT);
+    this.socket = io(API_ROOT, {
+      secure: true,
+      reconnect: true,
+      rejectUnauthorized: false
+    });
     this.socket.on("Brocast_area_feed", cast => {
       console.log("New cast recceived from feed", cast);
       this.setState({ casts: [...this.state.casts, cast] });
