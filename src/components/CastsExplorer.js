@@ -22,7 +22,7 @@ export default class CastsExplorer extends Component {
             <List.Item onClick={() => this.props.onNewCastSelection(cast)}>
               <List.Content
                 header={cast.properties.title}
-                description={cast.properties.message}
+                description={cast.properties.message.substring(0, 50)}
               />
             </List.Item>
           ))}
