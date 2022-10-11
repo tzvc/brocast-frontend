@@ -1,0 +1,26 @@
+{
+  // This is a JSON with Comments file.
+  // It's basically JSON, with the addition of comments, and looser syntax 
+  // (trailing commas!).
+  
+  // Reflame uses this to identify your app.
+  "appId": "01GF3QBS557WQXGQ3G82P9VFKH",
+  
+  // Reflame will watch this directory for React code and ship changes instantly.
+  //
+  // This normally defaults to 'app', but we set this to 'src' for you
+  // since we noticed you're using Create React App.
+  "baseDirectory": "src",
+
+  // NPM packages listed here will be installed by Reflame every time you update this file.
+  "npmPackages": {
+    // // This key is the import identifier. You can use anything, but we recommend sticking 
+    // // with the name of the package unless you have a reason not to.
+    // "framer-motion": {
+    //   // This is the name of the package on NPM.
+    //   "name": "framer-motion",
+    //   // Version range of the package to use.
+    //   "version": "^6.2.8",
+    // },
+  },
+}
